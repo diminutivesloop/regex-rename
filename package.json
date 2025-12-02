@@ -2,6 +2,9 @@
   "name": "regex-rename",
   "module": "index.ts",
   "type": "module",
+  "bin": {
+    "regex-rename": "./index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
