@@ -59,8 +59,8 @@ function parseArgs(
   const replacement = nonOptionArgs[1];
 
   let regex: RegExp;
-  // If pattern is like /pattern/flags
   if (patternRaw.startsWith("/") && patternRaw.lastIndexOf("/") > 0) {
+    // pattern is like /pattern/flags
     const lastSlash = patternRaw.lastIndexOf("/");
     const body = patternRaw.slice(1, lastSlash);
     const flags = patternRaw.slice(lastSlash + 1);
@@ -74,7 +74,7 @@ function parseArgs(
       process.exit(2);
     }
   } else {
-    // treat as raw pattern with no flags
+    // raw pattern with no flags
     try {
       regex = new RegExp(patternRaw);
     } catch (err) {
@@ -92,6 +92,7 @@ function parseArgs(
 async function main() {
   const { dryRun, force, pattern, replacement } = parseArgs(process.argv);
 
+  // Plan renames
   const cwd = process.cwd();
   let entries: fs.Dirent[] = [];
   try {
