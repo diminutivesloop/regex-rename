@@ -103,7 +103,10 @@ async function main() {
   try {
     entries = await fs.promises.readdir(cwd, { withFileTypes: true });
   } catch (err) {
-    console.error("Failed to read current directory:", (err as Error).message);
+    console.error(
+      "Failed to read current directory:",
+      err instanceof Error ? err.message : err
+    );
     process.exit(1);
   }
 
@@ -160,7 +163,7 @@ async function main() {
     } catch (err) {
       console.error(
         `Failed to rename ${p.from} -> ${p.to}:`,
-        (err as Error).message
+        err instanceof Error ? err.message : err
       );
       errors++;
     }
