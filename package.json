@@ -1,5 +1,5 @@
 {
-  "name": "file-renamer",
+  "name": "regex-rename",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {

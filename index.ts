@@ -11,7 +11,7 @@ type Options = {
 };
 
 function printHelp() {
-  console.log(`Usage: bun rename.ts <pattern> <replacement> [--dry-run|-n] [--force|-f]
+  console.log(`Usage: regex-rename <pattern> <replacement> [--dry-run|-n] [--force|-f]
 
 - <pattern>: JavaScript-style regex. Either write as /pattern/flags or just pattern (no flags).
   Examples:
@@ -26,8 +26,8 @@ Options:
   --help, -h      : Show this help
 
 Examples:
-  bun rename.ts '/old-(.*)\.txt/' '$1.txt' --dry-run
-  bun rename.ts '^IMG_(\\d+)' 'photo_$1' -n
+  regex-rename '/old-(.*)\.txt/' '$1.txt' --dry-run
+  regex-rename '^IMG_(\\d+)' 'photo_$1' -n
 `);
 }
 
