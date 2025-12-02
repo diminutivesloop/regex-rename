@@ -33,9 +33,9 @@ Examples:
 
 function parseArgs(
   argv: string[]
-): Options & { pattern?: RegExp; replacement?: string } {
+): Options & { pattern: RegExp; replacement: string } {
   const opts: Options = { dryRun: false, force: false };
-  const args: string[] = [];
+  const nonOptionArgs: string[] = [];
 
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
@@ -44,10 +44,10 @@ function parseArgs(
     else if (a === "--help" || a === "-h") {
       printHelp();
       process.exit(0);
-    } else args.push(a);
+    } else nonOptionArgs.push(a);
   }
 
-  if (args.length < 2) {
+  if (nonOptionArgs.length < 2) {
     console.error(
       "Error: missing required arguments <pattern> and <replacement>.\n"
     );
@@ -55,8 +55,8 @@ function parseArgs(
     process.exit(2);
   }
 
-  const patternRaw = args[0];
-  const replacement = args[1];
+  const patternRaw = nonOptionArgs[0];
+  const replacement = nonOptionArgs[1];
 
   let regex: RegExp;
   // If pattern is like /pattern/flags
@@ -90,13 +90,7 @@ function parseArgs(
 }
 
 async function main() {
-  const { dryRun, force, pattern, replacement } = parseArgs(
-    process.argv
-  ) as any;
-  if (!pattern || typeof replacement !== "string") {
-    console.error("Internal error: missing pattern or replacement");
-    process.exit(2);
-  }
+  const { dryRun, force, pattern, replacement } = parseArgs(process.argv);
 
   const cwd = process.cwd();
   let entries: fs.Dirent[] = [];
