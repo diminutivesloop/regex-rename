@@ -157,7 +157,6 @@ async function main() {
         continue;
       }
 
-      // Ensure target directory exists (should be same dir) and then rename.
       await fs.promises.rename(fromPath, toPath);
       success++;
     } catch (err) {
