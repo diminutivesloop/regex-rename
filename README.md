@@ -19,4 +19,4 @@ bun link
 regex-rename --help
 ```
 
-This project was created using `bun init` in bun v1.1.42. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+This project was written in large part using GitHub Copilot agent mode.
