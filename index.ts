@@ -13,10 +13,10 @@ type Options = {
 function printHelp() {
   console.log(`Usage: regex-rename <pattern> <replacement> [--dry-run|-n] [--force|-f]
 
-- <pattern>: JavaScript-style regex. Either write as /pattern/flags or just pattern (no flags).
+- <pattern>: JavaScript-style regex for matching whole or partial filenames. Either write as /pattern/flags or just pattern (no flags).
   Examples:
     /foo(\\d+)/i  -> matches foo1, foo2
-    ^old-(.*)$     -> matches start of filename "old-..."
+    ^old-(.*)$    -> matches start of filename "old-..."
 
 - <replacement>: Replacement string using $1, $2 etc for capture groups.
 
@@ -26,13 +26,13 @@ Options:
   --help, -h      : Show this help
 
 Examples:
-  regex-rename '/old-(.*)\.txt/' '$1.txt' --dry-run
-  regex-rename '^IMG_(\\d+)' 'photo_$1' -n
+  regex-rename '/old-(.*)\.txt/' '$1.txt'
+  regex-rename '^IMG_(\d+)\.jpg' 'photo_$1.jpg'
 `);
 }
 
 function parseArgs(
-  argv: string[]
+  argv: string[],
 ): Options & { pattern: RegExp; replacement: string } {
   const opts: Options = { dryRun: false, force: false };
   const nonOptionArgs: string[] = [];
@@ -49,7 +49,7 @@ function parseArgs(
 
   if (nonOptionArgs.length < 2) {
     console.error(
-      "Error: missing required arguments <pattern> and <replacement>.\n"
+      "Error: missing required arguments <pattern> and <replacement>.\n",
     );
     printHelp();
     process.exit(2);
@@ -69,7 +69,7 @@ function parseArgs(
     } catch (err) {
       console.error(
         "Invalid regular expression:",
-        err instanceof Error ? err.message : err
+        err instanceof Error ? err.message : err,
       );
       process.exit(2);
     }
@@ -80,7 +80,7 @@ function parseArgs(
     } catch (err) {
       console.error(
         "Invalid regular expression:",
-        err instanceof Error ? err.message : err
+        err instanceof Error ? err.message : err,
       );
       process.exit(2);
     }
@@ -100,7 +100,7 @@ async function main() {
   } catch (err) {
     console.error(
       "Failed to read current directory:",
-      err instanceof Error ? err.message : err
+      err instanceof Error ? err.message : err,
     );
     process.exit(1);
   }
@@ -128,7 +128,7 @@ async function main() {
 
   if (dryRun) {
     console.log(
-      `\nDry-run mode: no files were changed. Use without --dry-run to apply.`
+      `\nDry-run mode: no files were changed. Use without --dry-run to apply.`,
     );
     return;
   }
@@ -146,7 +146,7 @@ async function main() {
       const exists = fs.existsSync(toPath);
       if (exists && !force) {
         console.warn(
-          `Skipping rename: target exists and --force not set: ${p.to}`
+          `Skipping rename: target exists and --force not set: ${p.to}`,
         );
         skipped++;
         continue;
@@ -157,14 +157,14 @@ async function main() {
     } catch (err) {
       console.error(
         `Failed to rename ${p.from} -> ${p.to}:`,
-        err instanceof Error ? err.message : err
+        err instanceof Error ? err.message : err,
       );
       errors++;
     }
   }
 
   console.log(
-    `\nResult: ${success} renamed, ${skipped} skipped, ${errors} errors.`
+    `\nResult: ${success} renamed, ${skipped} skipped, ${errors} errors.`,
   );
   if (errors > 0) process.exit(1);
 }
