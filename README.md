@@ -28,4 +28,4 @@ For example, to rename a series of image files starting with `IMG_` to `photo_`:
 regex-rename '^IMG_(\d+)\.jpg' 'photo_$1.jpg'
 ```
 
-🤖 Built w/ substantial help from GitHub Copilot
+🤖 Built w/ help from AI
