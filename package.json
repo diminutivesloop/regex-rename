@@ -6,7 +6,8 @@
     "regex-rename": "./index.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/node": "^26.6.5"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
