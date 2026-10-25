@@ -28,4 +28,14 @@ For example, to rename a series of image files starting with `IMG_` to `photo_`:
 regex-rename '^IMG_(\d+)\.jpg' 'photo_$1.jpg'
 ```
 
+## Tests
+
+Run the CLI integration tests:
+
+```bash
+bun test
+```
+
+Tests create files in isolated temporary directories and invoke the CLI as a subprocess.
+
 🤖 Built w/ help from AI
