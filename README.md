@@ -19,13 +19,13 @@ bun link
 ## Usage
 
 ```bash
-regex-rename <pattern> <replacement> [--dry-run|-n] [--force|-f]
+regex-rename <pattern> [replacement] [--dry-run|-n] [--force|-f]
 ```
 
-For example, to rename a series of image files starting with `IMG_` to `photo_`:
+For example, to rename a series of image files prefixed w/ numbers (e.g., `123IMG.jpg` -> `photo_123.jpg`):
 
 ```bash
-regex-rename '^IMG_(\d+)\.jpg' 'photo_$1.jpg'
+regex-rename '^(\d+)IMG\.jpg' 'photo_$1.jpg'
 ```
 
 ## Tests

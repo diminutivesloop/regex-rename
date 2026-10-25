@@ -47,19 +47,44 @@ async function fixture(name: string, content = name) {
   await writeFile(path.join(directory, name), content);
 }
 
-test("renames multiple files with capture groups and preserves unmatched files", async () => {
+test("renames multiple files", async () => {
   await fixture("IMG_1.jpg", "first image");
   await fixture("IMG_2.jpg", "second image");
-  await fixture("notes.txt", "keep me");
+  await fixture("IMG_3.jpg", "third image");
 
-  const result = await run("^IMG_(\\d+)\\.jpg$", "photo_$1.jpg");
+  const result = await run("^IMG", "photo");
 
   expect(result.exitCode).toBe(0);
-  expect(result.stderr).toBe("");
-  expect(result.stdout).toContain("2 renamed, 0 skipped, 0 errors");
-  expect(await files()).toEqual(["notes.txt", "photo_1.jpg", "photo_2.jpg"]);
+  expect(result.stdout).toContain("3 renamed, 0 skipped, 0 errors");
+  expect(await files()).toEqual(["photo_1.jpg", "photo_2.jpg", "photo_3.jpg"]);
   expect(await contents("photo_1.jpg")).toBe("first image");
   expect(await contents("photo_2.jpg")).toBe("second image");
+  expect(await contents("photo_3.jpg")).toBe("third image");
+});
+
+test("supports capture groups", async () => {
+  await fixture("123IMG.jpg", "first image");
+  await fixture("456IMG.jpg", "second image");
+
+  const result = await run("^(\\d+)IMG\\.jpg", "photo_$1.jpg");
+
+  expect(result.exitCode).toBe(0);
+  expect(result.stdout).toContain("2 renamed, 0 skipped, 0 errors");
+  expect(await files()).toEqual(["photo_123.jpg", "photo_456.jpg"]);
+  expect(await contents("photo_123.jpg")).toBe("first image");
+  expect(await contents("photo_456.jpg")).toBe("second image");
+});
+
+test("preserves unmatched files", async () => {
+  await fixture("old-report.txt", "original content");
+  await fixture("notes.txt", "keep me");
+
+  const result = await run("old", "new");
+
+  expect(result.exitCode).toBe(0);
+  expect(result.stdout).toContain("1 renamed, 0 skipped, 0 errors");
+  expect(await files()).toEqual(["new-report.txt", "notes.txt"]);
+  expect(await contents("new-report.txt")).toBe("original content");
   expect(await contents("notes.txt")).toBe("keep me");
 });
 
@@ -71,6 +96,27 @@ test("supports regex literal syntax with case-insensitive and global flags", asy
   expect(result.exitCode).toBe(0);
   expect(await files()).toEqual(["new-new.txt"]);
   expect(await contents("new-new.txt")).toBe("original content");
+});
+
+test("omitting replacement removes matches", async () => {
+  await fixture("old-report.txt", "original content");
+  await fixture("notes.txt", "keep me");
+
+  const result = await run("^old-");
+
+  expect(result.exitCode).toBe(0);
+  expect(await files()).toEqual(["notes.txt", "report.txt"]);
+  expect(await contents("report.txt")).toBe("original content");
+  expect(await contents("notes.txt")).toBe("keep me");
+});
+
+test("omitted replacement removes all matches with the global flag", async () => {
+  await fixture("old-old-report.txt");
+
+  const result = await run("/old-/g");
+
+  expect(result.exitCode).toBe(0);
+  expect(await files()).toEqual(["report.txt"]);
 });
 
 test.each(["--dry-run", "-n"])(
@@ -161,13 +207,13 @@ test.each(["--help", "-h"])("%s displays help successfully", async (flag) => {
   expect(await files()).toEqual([]);
 });
 
-test.each([[], ["old"]])(
+test.each([[], ["--dry-run"]])(
   "rejects missing required arguments: %j",
   async (...args) => {
     const result = await run(...args);
 
     expect(result.exitCode).toBe(2);
-    expect(result.stderr).toContain("missing required arguments");
+    expect(result.stderr).toContain("missing required argument <pattern>");
     expect(result.stdout).toContain("Usage: regex-rename");
     expect(await files()).toEqual([]);
   },

@@ -11,14 +11,14 @@ type Options = {
 };
 
 function printHelp() {
-  console.log(`Usage: regex-rename <pattern> <replacement> [--dry-run|-n] [--force|-f]
+  console.log(`Usage: regex-rename <pattern> [replacement] [--dry-run|-n] [--force|-f]
 
 - <pattern>: JavaScript-style regex for matching whole or partial filenames. Either write as /pattern/flags or just pattern (no flags).
   Examples:
     /foo(\\d+)/i  -> matches foo1, foo2
     ^old-(.*)$    -> matches start of filename "old-..."
 
-- <replacement>: Replacement string using $1, $2 etc for capture groups.
+- [replacement]: Replacement string for the matched pattern. Defaults to an empty string, removing matches. Optionally supports $1, $2 etc for capture groups.
 
 Options:
   --dry-run, -n   : Show planned renames without applying them
@@ -27,7 +27,7 @@ Options:
 
 Examples:
   regex-rename '/old-(.*)\.txt/' '$1.txt'
-  regex-rename '^IMG_(\d+)\.jpg' 'photo_$1.jpg'
+  regex-rename '^(\d+)IMG\.jpg' 'photo_$1.jpg'
 `);
 }
 
@@ -47,16 +47,14 @@ function parseArgs(
     } else nonOptionArgs.push(a);
   }
 
-  if (nonOptionArgs.length < 2) {
-    console.error(
-      "Error: missing required arguments <pattern> and <replacement>.\n",
-    );
+  if (nonOptionArgs.length < 1) {
+    console.error("Error: missing required argument <pattern>.\n");
     printHelp();
     process.exit(2);
   }
 
   const patternRaw = nonOptionArgs[0];
-  const replacement = nonOptionArgs[1];
+  const replacement = nonOptionArgs[1] ?? "";
 
   let regex: RegExp;
   if (patternRaw.startsWith("/") && patternRaw.lastIndexOf("/") > 0) {
